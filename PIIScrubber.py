@@ -39,15 +39,15 @@ class PIIScrubber:
             anonymized_text = self.anonymizer.anonymize(entity.category, entity.length, entity.text)
             self.cache_provider.set(anonymized_text, entity.text)
             # Replace the original text with the anonymized text
-            text = text.replace(entity.text, "<" + anonymized_text + ">")
+            text = text.replace(entity.text, ":" + anonymized_text + ":")
         return text
 
     def deanonymize(self, text: str):
         '''This method deanonymizes the text. It then retrieves the original text from the cache.'''
         # Find all the anonymized text in the text
-        anonymized_texts = re.findall(r'<(.*?)>', text)
+        anonymized_texts = re.findall(r':(.*?):', text)
         for anonymized_text in anonymized_texts:
             original_text = self.cache_provider.get(anonymized_text)
             # Replace the anonymized text with the original text and remove the angle brackets
-            text = text.replace("<" + anonymized_text + ">", original_text)
+            text = text.replace(":" + anonymized_text + ":", original_text)
         return text
