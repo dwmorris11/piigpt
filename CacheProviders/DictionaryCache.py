@@ -1,6 +1,6 @@
 import time
 import threading
-from BaseCache import BaseCache
+from .BaseCache import BaseCache
 
 class DictionaryCache(BaseCache):
     def __init__(self, time_to_live = 600, time_to_destroy = 60):

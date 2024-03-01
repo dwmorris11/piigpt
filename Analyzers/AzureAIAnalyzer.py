@@ -1,7 +1,7 @@
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient, RecognizePiiEntitiesResult, DocumentError, PiiEntity
 from Analyzers.BaseAnalyzer import BaseAnalyzer
-from AnalyzerType import AnalyzerType
+from .AnalyzerType import AnalyzerType
 
 class AzureAIAnalyzer(BaseAnalyzer):
     def __init__(self, key, endpoint):

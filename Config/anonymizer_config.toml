@@ -1,8 +1,10 @@
-[[azure.default.pattern]]
-r'^[a-zA-Z0-9]{10}$'
+[azure]
 
-[[azure.email.pattern]]
-r'^[a-zA-Z0-9._%+-]{5}+@[a-zA-Z0-9.-]{5}+\.[a-zA-Z]{2,}$'
+[azure.default]
+pattern = r'^[a-zA-Z0-9]{10}$'
 
-[[azure.ussocialsecuritynumber.pattern]]
-r'^\d{3}-\d{2}-\d{4}$'
+[azure.email]
+pattern = r'^[a-zA-Z0-9._%+-]{5}+@[a-zA-Z0-9.-]{5}+\.[a-zA-Z]{2,}$'
+
+[azure.ussocialsecuritynumber]
+pattern = r'^\d{3}-\d{2}-\d{4}$'

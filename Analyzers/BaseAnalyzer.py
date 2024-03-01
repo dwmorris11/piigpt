@@ -1,6 +1,6 @@
 import os
 import toml
-from AnalyzerType import AnalyzerType
+from Analyzers.AnalyzerType import AnalyzerType
 class BaseAnalyzer:
     def __init__(self, config):
         self.config = config
@@ -15,7 +15,7 @@ class BaseAnalyzer:
         raise NotImplementedError("Get entities method is not implemented")
 
     def _load_configuration(self, analyzer_type: AnalyzerType):
-        file_path = os.path.join(os.path.dirname(__file__), "/Config/analyzer_config.toml")
+        file_path = os.path.join(os.path.dirname(__file__), "../Config/analyzer_config.toml")
         if not os.path.exists(file_path):
             raise FileNotFoundError("The analyzer configuration file was not found")
         with open(file_path) as file:

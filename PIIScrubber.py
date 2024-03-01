@@ -1,6 +1,7 @@
 from os import getenv
-from Analyzers import AnalyzerType
-from CacheProviders import BaseCache, DictionaryCache
+from Analyzers.AnalyzerType import AnalyzerType
+from CacheProviders.BaseCache import BaseCache
+from CacheProviders.DictionaryCache import DictionaryCache
 
 class PIIScrubber:
     def __init__(self, analyzer_type: AnalyzerType, cache_provider: BaseCache = None):
@@ -10,7 +11,7 @@ class PIIScrubber:
     def _get_analyzer(self, analyzer_type: AnalyzerType):
         '''This method returns the analyzer based on the analyzer type'''
         if analyzer_type == AnalyzerType.AZURE:
-            from Analyzers import AzureAIAnalyzer
+            from Analyzers.AzureAIAnalyzer import AzureAIAnalyzer
             endpoint = getenv("AZURE_ENDPOINT")
             key = getenv("AZURE_KEY")
             if endpoint is None or key is None:

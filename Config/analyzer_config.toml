@@ -1,7 +1,3 @@
 [azure]
-
-[[azure.language]]
-en
-
-[[azure.domain_filter]]
-phi
+language = "en"
+domain_filter = "phi"
