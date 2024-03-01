@@ -14,6 +14,9 @@ class DictionaryCache(BaseCache):
     def get(self, key):
         return self.cache.get(key)["value"]
 
+    def delete(self, key):
+        del self.cache[key]
+
     def _initialize_destroyer(self):
         '''This method starts a thread to destroy the cache when it expires'''
         destroyer = threading.Thread(target=self._destroy)

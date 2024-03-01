@@ -4,3 +4,6 @@ class BaseCache:
 
     def get(self, key):
         raise NotImplementedError("Get method is not implemented")
+
+    def delete(self, key):
+        raise NotImplementedError("Delete method is not implemented")

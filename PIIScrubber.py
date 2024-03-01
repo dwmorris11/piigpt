@@ -50,4 +50,6 @@ class PIIScrubber:
             original_text = self.cache_provider.get(anonymized_text)
             # Replace the anonymized text with the original text and remove the angle brackets
             text = text.replace(":" + anonymized_text + ":", original_text)
+            # Remove the original text from the cache
+            self.cache_provider.delete(anonymized_text)
         return text
