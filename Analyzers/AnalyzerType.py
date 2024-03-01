@@ -1,6 +1,6 @@
 from enum import Enum
 
-class AnalyzerTypes(Enum):
+class AnalyzerType(Enum):
     """
     Enum for the different types of analyzers
     """
