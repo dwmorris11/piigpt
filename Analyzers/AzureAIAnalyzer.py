@@ -2,6 +2,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient, RecognizePiiEntitiesResult, DocumentError, PiiEntity
 from Analyzers.BaseAnalyzer import BaseAnalyzer
 from .AnalyzerType import AnalyzerType
+from Analyzers.PIIEntity import PIIEntity
 
 class AzureAIAnalyzer(BaseAnalyzer):
     def __init__(self, key, endpoint):
@@ -29,4 +30,8 @@ class AzureAIAnalyzer(BaseAnalyzer):
     def get_entities(self, text: list[str]) -> list[list[PiiEntity]]:
         docs = self.analyze(text)
         entities = [doc.entities for doc in docs]
-        return entities
+        return self._normalized_entities(entities)
+
+    def _normalized_entities(self, entities: list[list[PiiEntity]]) -> list[PIIEntity]:
+        '''This method repackages the entities into a normalized list of PIIEntity objects to support the BaseAnalyzer interface'''
+        return [PIIEntity(entity.text, entity.category, entity.subcategory, entity.offset, entity.length) for doc in entities for entity in doc]

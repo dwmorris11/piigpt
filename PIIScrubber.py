@@ -1,12 +1,17 @@
 from os import getenv
+import re
 from Analyzers.AnalyzerType import AnalyzerType
 from CacheProviders.BaseCache import BaseCache
 from CacheProviders.DictionaryCache import DictionaryCache
+from Analyzers.PIIEntity import PIIEntity
+from Anonymizer import Anonymizer
 
 class PIIScrubber:
-    def __init__(self, analyzer_type: AnalyzerType, cache_provider: BaseCache = None):
+    def __init__(self, analyzer_type: AnalyzerType, cache_provider: BaseCache = None, anonymizer = None):
         self.analyzer = self._get_analyzer(analyzer_type)
         self.cache_provider = cache_provider if cache_provider is not None else DictionaryCache()
+        self.anonymizer = anonymizer if anonymizer is not None else Anonymizer(analyzer_type = analyzer_type)
+
 
     def _get_analyzer(self, analyzer_type: AnalyzerType):
         '''This method returns the analyzer based on the analyzer type'''
@@ -24,14 +29,25 @@ class PIIScrubber:
         '''This method scrubs the text of PII and returns the redacted text'''
         return self.analyzer.scrub(text)
 
-    def get_entities(self, text):
+    def get_entities(self, text)  -> list[PIIEntity]:
         '''This method returns the PII entities in the text'''
-        return self.analyzer.get_entities(self.text)
+        return self.analyzer.get_entities(text)
 
-    def anonymize(self, text):
+    def anonymize(self, entities: list[PIIEntity], text: str):
         '''This method anonymizes the text. It then stores the original text and the anonymized text in the cache.'''
-        return self.analyzer.anonymize(text)
+        for entity in entities:
+            anonymized_text = self.anonymizer.anonymize(entity.category, entity.length, entity.text)
+            self.cache_provider.set(anonymized_text, entity.text)
+            # Replace the original text with the anonymized text
+            text = text.replace(entity.text, "<" + anonymized_text + ">")
+        return text
 
-    def deanonymize(self, text):
+    def deanonymize(self, text: str):
         '''This method deanonymizes the text. It then retrieves the original text from the cache.'''
-        return self.cache_provider.get(self.anonymize(self.text))
+        # Find all the anonymized text in the text
+        anonymized_texts = re.findall(r'<(.*?)>', text)
+        for anonymized_text in anonymized_texts:
+            original_text = self.cache_provider.get(anonymized_text)
+            # Replace the anonymized text with the original text and remove the angle brackets
+            text = text.replace("<" + anonymized_text + ">", original_text)
+        return text

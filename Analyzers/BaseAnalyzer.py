@@ -1,6 +1,8 @@
 import os
 import toml
 from Analyzers.AnalyzerType import AnalyzerType
+from Analyzers.PIIEntity import PIIEntity
+
 class BaseAnalyzer:
     def __init__(self, config):
         self.config = config
@@ -13,6 +15,9 @@ class BaseAnalyzer:
 
     def get_entities(self, data):
         raise NotImplementedError("Get entities method is not implemented")
+
+    def _normalized_entities(self, entities: list[list[any]]) -> list[PIIEntity]:
+        raise NotImplementedError("Normalized entities method is not implemented")
 
     def _load_configuration(self, analyzer_type: AnalyzerType):
         file_path = os.path.join(os.path.dirname(__file__), "../Config/analyzer_config.toml")
