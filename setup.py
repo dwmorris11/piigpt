@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='piigpt',
-    version='0.12',
+    version='0.13',
     description='Provides a mechanism to anonymize PII and PHI before sending to a LLM API',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
