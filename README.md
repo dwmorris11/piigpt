@@ -1,6 +1,10 @@
 # piigpt
 
-Provides a mechanism to anonymize PII and PHI before sending to a LLM API
+Provides a mechanism to anonymize PII and PHI before sending to a LLM API.
+
+Using the anonymize function will generate a different anonymous symbol for each entity.
+
+Using the anonymize_maintain_context function uses the same anonymous symbol for every occurrence of the same word.
 
 ## Basic Setup:
 
@@ -12,10 +16,12 @@ def main():
     from dotenv import load_dotenv
     load_dotenv("sample.env")
     pii = PIIScrubber(AnalyzerType.AZURE)
-    text = "My phone number is 555-555-5555"
+    text = "Bob is a man.  Bob is 30 years old.  Bob is a doctor."
     print(pii.scrub([text]))
     print(pii.get_entities([text]))
     print(pii.anonymize(pii.get_entities([text]), text))
+    print(pii.deanonymize(pii.anonymize(pii.get_entities([text]), text)))
+    print(pii.anonymize_maintain_context(pii.get_entities([text]), text))
     print(pii.deanonymize(pii.anonymize(pii.get_entities([text]), text)))
 
 if __name__ == "__main__":
@@ -23,10 +29,12 @@ if __name__ == "__main__":
 ```
 
 **Output:**
-['My phone number is ************']
-[Text: 555-555-5555, Category: PhoneNumber, Subcategory: None, Offset: 19, Length: 12]
-My phone number is :yudDNDuGJG:
-My phone number is 555-555-5555
+['*** is a man.  *** is ************.  *** is a ******.']
+[Text: Bob, Category: Person, Subcategory: None, Offset: 0, Length: 3, Text: Bob, Category: Person, Subcategory: None, Offset: 15, Length: 3, Text: 30 years old, Category: Quantity, Subcategory: Age, Offset: 22, Length: 12, Text: Bob, Category: Person, Subcategory: None, Offset: 37, Length: 3, Text: doctor, Category: PersonType, Subcategory: None, Offset: 46, Length: 6]
+:GusUWBK7aC: is a man.  :GusUWBK7aC: is :YgmVZxmRW6:.  :GusUWBK7aC: is a :QKFaqn1HRv:.
+Bob is a man.  Bob is 30 years old.  Bob is a doctor.
+:TSEuDSIxsw: is a man.  :TSEuDSIxsw: is :bl8EurovmC:.  :TSEuDSIxsw: is a :9pMYbEhLwd:.
+Bob is a man.  Bob is 30 years old.  Bob is a doctor.
 
 ## Extensible
 #### Analyzers:

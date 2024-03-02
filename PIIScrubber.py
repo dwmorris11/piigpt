@@ -42,6 +42,21 @@ class PIIScrubber:
             text = text.replace(entity.text, ":" + anonymized_text + ":")
         return text
 
+    def anonymize_maintain_context(self, entities: list[PIIEntity], text: str):
+        '''This method anonymizes the text while maintaining the context of the original text. It then stores the original text and the anonymized text in the cache.
+            For example:  Bob is a man.  Bob is 30 years old.  Bob is a doctor. is replaced with :SAMETEXT: is a man. :SAMETEXT: is 30 years old. :SAMETEXT: is a doctor.
+        '''
+        for entity in entities:
+            anonymized_text = self.cache_provider.get(entity.text)
+            if anonymized_text is None:
+                anonymized_text = self.anonymizer.anonymize(entity.category, entity.length, entity.text)
+                # Store the original text and the anonymized text in the cache by both keys
+                self.cache_provider.set(anonymized_text, entity.text)
+                self.cache_provider.set(entity.text, anonymized_text)
+            # Replace the original text with the anonymized text
+            text = re.sub(r'\b' + entity.text + r'\b', ":" + anonymized_text + ":", text)
+        return text
+
     def deanonymize(self, text: str):
         '''This method deanonymizes the text. It then retrieves the original text from the cache.'''
         # Find all the anonymized text in the text
@@ -50,6 +65,8 @@ class PIIScrubber:
             original_text = self.cache_provider.get(anonymized_text)
             # Replace the anonymized text with the original text and remove the angle brackets
             text = text.replace(":" + anonymized_text + ":", original_text)
+        for anonymized_text in anonymized_texts:
             # Remove the original text from the cache
             self.cache_provider.delete(anonymized_text)
+            self.cache_provider.delete(original_text)
         return text
