@@ -35,7 +35,7 @@ class Anonymizer:
             return f"{''.join([chr(random.randint(97, 122)) for _ in range(text_length)])}"
         if entity_type in self.config\
             and "pattern" in self.config[entity_type]:
-            pattern = re.compile(self.config[entity_type]["pattern"])
+            pattern = re.compile(self.config[entity_type]["pattern"]).pattern
             pattern_length = self.config[entity_type]["length"] if "length" in self.config[entity_type] else -1
             # Add length to pattern
             if length is not None:
@@ -44,8 +44,8 @@ class Anonymizer:
                 pattern = f"{pattern}{{{pattern_length}}}$"
             return exrex.getone(pattern)
         elif "default" in self.config:
-            pattern = re.compile(self.config["default"]['pattern'])
-            return exrex.getone(pattern.pattern)
+            pattern = re.compile(self.config["default"]['pattern']).pattern
+            return exrex.getone(pattern)
         else:
             raise ValueError("The entity type is not supported and no default pattern is provided.")
 
